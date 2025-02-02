@@ -1,6 +1,7 @@
 // .vscode/settings.json
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.unusualLineTerminators": "off",
   "editor.formatOnSave": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
