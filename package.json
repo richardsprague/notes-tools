@@ -6,7 +6,10 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "NODE_NO_WARNINGS=1 node --loader ts-node/esm src/index.ts",
-    "create-project": "node --loader ts-node/esm src/scripts/create-quarto-project.ts"
+    "create-project": "node --loader ts-node/esm src/scripts/create-quarto-project.ts",
+    "copy-quarto": "NODE_NO_WARNINGS=1 node --loader ts-node/esm src/scripts/copy-to-quarto.ts",
+    "process-and-copy": "npm run dev && npm run copy-quarto"
+
 
   },
   "dependencies": {

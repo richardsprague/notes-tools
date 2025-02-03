@@ -5,6 +5,7 @@ import remarkParse from "remark-parse";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkStringify from "remark-stringify";
 import { NoteFile } from "./types.js";
+import { processImages } from "./imageHandler.js";
 
 function formatDateBox(date: Date, dayName: string): string {
   const monthNames = [
@@ -42,7 +43,7 @@ export async function processNote(noteFile: NoteFile): Promise<string> {
     ast.children = ast.children.filter((node) => node.type !== "yaml");
   }
 
-  const processed = await processor.stringify(ast);
+  let processed = await processor.stringify(ast);
 
   // Extract day name from filename
   const dayMatch = noteFile.filename.match(/Notes \d{6} (\w+)\.md$/);
@@ -51,5 +52,16 @@ export async function processNote(noteFile: NoteFile): Promise<string> {
   // Format the date box as in the Python implementation
   const dateBox = formatDateBox(noteFile.date, dayName);
 
-  return `${dateBox}\n\n${processed}`;
+  // Process images and get updated content
+  const processedWithImages = await processImages(
+    {
+      date: noteFile.date,
+      content: processed,
+      filename: noteFile.filename,
+    },
+    noteFile.path,
+    process.env.OUTPUT_DIR || "./output"
+  );
+
+  return `${dateBox}\n\n${processedWithImages}`;
 }
