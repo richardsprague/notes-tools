@@ -19,6 +19,22 @@ A TypeScript-based utility for processing and combining daily markdown notes fil
 - TypeScript
 - Git (optional)
 
+## Quick Start
+
+You must explicitly set the directory where your notes are kept.
+
+Generate a consolidated notes file in `./output`:
+
+```bash
+NOTES_DIR="~/vaults/notes/Sprague2025/Notes2025" NOTES_QUARTER="Notes 2025Q1" OUTPUT_DIR="./output" npm run dev
+```
+
+then copy it to the `notes-quarto` directory
+
+```bash
+npm run copy-quarto
+```
+
 ## Installation
 
 1. Clone the repository or create a new directory:
