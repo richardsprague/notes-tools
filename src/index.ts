@@ -7,33 +7,33 @@ import { ProcessedNote } from "./types.js";
 
 async function main() {
   try {
-    const baseDir =
+    const notesDir =
       process.env.NOTES_DIR || "~/vaults/notes/Sprague2025/Notes2025";
-    const quarter = process.env.NOTES_QUARTER || "Notes 2025Q1";
     const outputDir = process.env.OUTPUT_DIR || "./output";
 
-    const notesDir = `${baseDir}/${quarter}`;
     console.log(`Starting notes processing from ${notesDir}...`);
 
     // Ensure output directory exists
     await ensureDirectory(outputDir);
 
-    // Find all note files
+    // Find all note files recursively
     const filePaths = await findNoteFiles(notesDir);
 
     // Read and process each file
     const processedNotes = await Promise.all(
-      filePaths.sort().map(async (filepath: string) => {
-        const noteFile = await readNoteFile(filepath);
-        if (!noteFile) return null;
+      filePaths
+        .sort() // Initial sort by filepath for consistency
+        .map(async (filepath: string) => {
+          const noteFile = await readNoteFile(filepath);
+          if (!noteFile) return null;
 
-        const processed = await processNote(noteFile);
-        return {
-          date: noteFile.date,
-          content: processed,
-          filename: noteFile.filename,
-        } as ProcessedNote;
-      })
+          const processed = await processNote(noteFile);
+          return {
+            date: noteFile.date,
+            content: processed,
+            filename: noteFile.filename,
+          } as ProcessedNote;
+        })
     );
 
     // Filter out nulls and sort by date
@@ -46,13 +46,13 @@ async function main() {
 
     console.log(`Successfully processed ${validNotes.length} notes`);
 
-    // Combine all notes with consistent line endings and proper spacing
+    // Combine all notes into a single document
     const combinedContent = validNotes
-      .map((note: ProcessedNote) => note.content.replace(/\r\n/g, "\n")) // Normalize CRLF to LF
+      .map((note: ProcessedNote) => note.content.replace(/\r\n/g, "\n"))
       .join("\n\n")
-      .replace(/\u2028/g, "\n") // Replace LS (Line Separator)
-      .replace(/\u2029/g, "\n") // Replace PS (Paragraph Separator)
-      .replace(/\n{3,}/g, "\n\n"); // Replace multiple blank lines with double
+      .replace(/\u2028/g, "\n")
+      .replace(/\u2029/g, "\n")
+      .replace(/\n{3,}/g, "\n\n");
 
     // Write the combined output
     const outputPath = join(outputDir, "combined_notes.md");
@@ -65,7 +65,7 @@ async function main() {
     await writeFile(join(outputDir, "processed_files.txt"), summaryContent);
 
     console.log(`\nProcessing complete!`);
-    console.log(`Full notes written to: ${outputPath}`);
+    console.log(`Combined notes written to: ${outputPath}`);
     console.log(
       `Summary written to: ${join(outputDir, "processed_files.txt")}`
     );
@@ -75,7 +75,6 @@ async function main() {
   }
 }
 
-// Check if this is being run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

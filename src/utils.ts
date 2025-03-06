@@ -6,15 +6,16 @@ import { existsSync } from "fs";
 import { NoteFile } from "./types.js";
 
 export async function findNoteFiles(directory: string): Promise<string[]> {
-  console.log(`Searching for notes in: ${directory}`);
-  const pattern = `${directory}/Notes *.md`;
-  const files = await glob(pattern);
+  console.log(`Searching for notes recursively in: ${directory}`);
+  // Use ** to search recursively, matching "Notes YYMMDD Weekday.md"
+  const pattern = `${directory}/**/Notes [0-9][0-9][0-1][0-9][0-3][0-9] *.md`;
+  const files = await glob(pattern, { nodir: true }); // nodir ensures we only get files, not directories
   console.log(`Found ${files.length} note files`);
   return files;
 }
 
 export function extractDateFromFilename(filename: string): Date | null {
-  const match = filename.match(/Notes (\d{2})(\d{2})(\d{2})/);
+  const match = filename.match(/Notes (\d{2})(\d{2})(\d{2})\s+(\w+)\.md$/);
   if (!match) {
     console.log(`Warning: Could not extract date from filename: ${filename}`);
     return null;

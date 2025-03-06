@@ -26,7 +26,7 @@ You must explicitly set the directory where your notes are kept.
 Generate a consolidated notes file in `./output`:
 
 ```bash
-NOTES_DIR="~/vaults/notes/Sprague2025/Notes2025" NOTES_QUARTER="Notes 2025Q1" OUTPUT_DIR="./output" npm run dev
+NOTES_DIR=/Users/sprague/vaults/notes/Sprague2025/Notes2025 OUTPUT_DIR="./output" npm run dev
 ```
 
 then copy it to the `notes-quarto` directory
